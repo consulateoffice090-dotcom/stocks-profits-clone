@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backend ignore
+server/database.db
+server/database.db-shm
+server/database.db-wal
+server/.env
+.env.production

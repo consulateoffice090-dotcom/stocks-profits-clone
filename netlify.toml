@@ -1,0 +1,15 @@
+[build]
+  command   = "npm run build"
+  publish   = "dist"
+
+# Redirect all page routes to their built HTML files
+[[redirects]]
+  from = "/pages/*"
+  to   = "/pages/:splat"
+  status = 200
+
+# Fallback for root
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

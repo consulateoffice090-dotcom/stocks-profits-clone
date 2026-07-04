@@ -737,8 +737,7 @@ function dismissIosPrompt() {
                                 <div class="flex items-center space-x-2">
                                     <span class="font-semibold text-white">BTC/USD</span>
                                     <span class="text-lg font-bold" :class="price > prevPrice ? 'text-green-400' : price < prevPrice ? 'text-red-400' : 'text-white'"
-                                        x-text="'$' + price.toLocaleString()"
-                                        x-transition:class="price > prevPrice ? 'animate-pulse bg-green-500 bg-opacity-10' : 'animate-pulse bg-red-500 bg-opacity-10'">
+                                        x-text="'$' + price.toLocaleString()">
                                          $61,656.00
                                     </span>
                                     <span class="px-1.5 py-0.5 text-xs rounded"

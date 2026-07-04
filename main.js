@@ -17,7 +17,7 @@ document.addEventListener('alpine:init', () => {
     });
 
     Alpine.store('darkMode', {
-        on: true,
+        on: localStorage.getItem('darkMode') !== 'light',
         toggle() {
             this.on = !this.on;
             if (this.on) {
@@ -35,14 +35,15 @@ document.addEventListener('alpine:init', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const theme = localStorage.getItem('darkMode');
+    const theme = localStorage.getItem('darkMode') || 'dark';
     if (theme === 'light') {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('bg-gray-900');
         document.body.classList.add('bg-gray-100');
-        if (window.Alpine) {
-            Alpine.store('darkMode').on = false;
-        }
+    } else {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('bg-gray-900');
+        document.body.classList.remove('bg-gray-100');
     }
 });
 

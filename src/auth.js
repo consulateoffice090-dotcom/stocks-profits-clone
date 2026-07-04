@@ -4,7 +4,7 @@
  * Intercepts form submissions and calls the local Express API.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/auth';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://stocks-profits-clone.onrender.com/api/auth';
 
 // ── LOGIN ────────────────────────────────────────────────────────────────────
 const loginForm = document.getElementById('login-form');

@@ -250,9 +250,137 @@
 
 
   <script type="module" src="/main.js"></script>
+  <script type="module" src="/src/dashboard-shell.js"></script>
 </head>
 
 <body class="antialiased text-gray-200 bg-gray-900 font-sans min-h-screen flex flex-col">
+
+<template id="dashboard-content">
+  <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-bottom:28px;">
+    <!-- Left Column: Bot control & log console -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <!-- Grid of bots -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+        <!-- Bot 1: Arbitrage Alpha -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; position:relative; display:flex; flex-direction:column; justify-content:between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:11px; font-weight:700; color:#3b82f6; text-transform:uppercase; background:rgba(59,130,246,0.1); padding:4px 8px; border-radius:4px;">Arbitrage</span>
+              <span id="bot-status-1" style="font-size:11px; font-weight:600; color:#9ca3af;">Inactive</span>
+            </div>
+            <h3 style="font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Arbitrage Alpha Bot</h3>
+            <p style="font-size:12px; color:#9ca3af; line-height:1.5; margin-bottom:16px;">Scans cross-exchange pricing anomalies on BTC, ETH, and major crypto assets for high-frequency risk-free yields.</p>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px;">
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Proj. APY</div>
+                <div style="font-size:15px; font-weight:700; color:#10b981;">42.5%</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Risk Level</div>
+                <div style="font-size:15px; font-weight:700; color:#3b82f6;">Low</div>
+              </div>
+            </div>
+          </div>
+          <button id="bot-btn-1" onclick="toggleBot(1, 'Arbitrage Alpha Bot', 250)" class="submit-btn" style="width:100%; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; transition:all 0.2s;">
+            Launch Bot
+          </button>
+        </div>
+
+        <!-- Bot 2: Trend Rider Pro -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; position:relative; display:flex; flex-direction:column; justify-content:between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:11px; font-weight:700; color:#10b981; text-transform:uppercase; background:rgba(16,185,129,0.1); padding:4px 8px; border-radius:4px;">Trend Following</span>
+              <span id="bot-status-2" style="font-size:11px; font-weight:600; color:#9ca3af;">Inactive</span>
+            </div>
+            <h3 style="font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Trend Rider Pro</h3>
+            <p style="font-size:12px; color:#9ca3af; line-height:1.5; margin-bottom:16px;">Applies moving average crossovers and MACD momentum indicators to trade major Stock CFDs and Forex pairs.</p>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px;">
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Proj. APY</div>
+                <div style="font-size:15px; font-weight:700; color:#10b981;">28.0%</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Risk Level</div>
+                <div style="font-size:15px; font-weight:700; color:#f59e0b;">Medium</div>
+              </div>
+            </div>
+          </div>
+          <button id="bot-btn-2" onclick="toggleBot(2, 'Trend Rider Pro', 500)" class="submit-btn" style="width:100%; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #10b981, #059669); color:#fff; transition:all 0.2s;">
+            Launch Bot
+          </button>
+        </div>
+
+        <!-- Bot 3: Mean Reversion Grid -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; position:relative; display:flex; flex-direction:column; justify-content:between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:11px; font-weight:700; color:#8b5cf6; text-transform:uppercase; background:rgba(139,92,246,0.1); padding:4px 8px; border-radius:4px;">Grid / Range</span>
+              <span id="bot-status-3" style="font-size:11px; font-weight:600; color:#9ca3af;">Inactive</span>
+            </div>
+            <h3 style="font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;">Mean Reversion Grid</h3>
+            <p style="font-size:12px; color:#9ca3af; line-height:1.5; margin-bottom:16px;">Places grid orders on stable EUR/USD, GBP/USD, and AUD/USD ranges to capture profit from small oscillations.</p>
+            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px;">
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Proj. APY</div>
+                <div style="font-size:15px; font-weight:700; color:#10b981;">18.5%</div>
+              </div>
+              <div>
+                <div style="font-size:10px; color:#6b7280; text-transform:uppercase;">Risk Level</div>
+                <div style="font-size:15px; font-weight:700; color:#8b5cf6;">Low</div>
+              </div>
+            </div>
+          </div>
+          <button id="bot-btn-3" onclick="toggleBot(3, 'Mean Reversion Grid', 200)" class="submit-btn" style="width:100%; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; transition:all 0.2s;">
+            Launch Bot
+          </button>
+        </div>
+      </div>
+
+      <!-- Log Terminal Console -->
+      <div class="card" style="background: #060913; border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; display:flex; flex-direction:column; height:320px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:14px; font-weight:700; color:#f1f5f9; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-terminal" style="color:#10b981;"></i> Bot Console Log
+          </div>
+          <button onclick="clearConsole()" style="background:transparent; border:none; color:#6b7280; font-size:11px; cursor:pointer; hover:color:#9ca3af;">Clear Console</button>
+        </div>
+        <div id="bot-console-logs" style="flex-grow:1; overflow-y:auto; font-family:'Courier New', monospace; font-size:12px; color:#a7f3d0; line-height:1.6; padding:10px; background:#02040a; border-radius:8px; border:1px solid rgba(255,255,255,0.03);">
+          <div style="color:#6b7280;">[System] Console initialized. Ready to execute algorithmic strategies. Select and launch a trading bot above to start.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Performance and allocations -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <!-- Total Bot Profit Card -->
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px;">
+        <div style="font-size:12px; color:#9ca3af; text-transform:uppercase; font-weight:600; margin-bottom:6px;">Total Bot Return</div>
+        <div id="bot-total-profit" style="font-size:28px; font-weight:800; color:#10b981; margin-bottom:4px;">+$0.00</div>
+        <div style="font-size:11px; color:#6b7280;">Simulated yields from active algorithmic runs</div>
+      </div>
+
+      <!-- Settings / Setup Card -->
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px;">
+        <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9; margin-bottom:12px;">Active Allocations</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">Arbitrage Alpha</span>
+            <span id="alloc-val-1" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">Trend Rider Pro</span>
+            <span id="alloc-val-2" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">Mean Reversion Grid</span>
+            <span id="alloc-val-3" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:bg-blue-700 focus:text-white focus:fixed focus:px-4 focus:py-2 focus:top-2 focus:left-2 focus:z-50">
         Skip to main content
@@ -1097,12 +1225,319 @@
 <!--        };-->
 <!--        var proto = 'https:', host = "getbutton.io", url = proto + '//static.' + host;-->
 <!--        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = url + '/widget-send-button/js/init.js';-->
+                                <span class="sr-only">Twitter</span>
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white">
+                                <span class="sr-only">LinkedIn</span>
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="mailto:support@stocks-profits.com" class="text-gray-400 hover:text-white">
+                                <span class="sr-only">Email</span>
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Quick Links</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/pages/about.html" class="text-sm text-gray-400 hover:text-white transition">About Us</a></li>
+                            <li><a href="/pages/why-us.html" class="text-sm text-gray-400 hover:text-white transition">Why Choose Us</a></li>
+                            <li><a href="/pages/for-traders.html" class="text-sm text-gray-400 hover:text-white transition">Education</a></li>
+                            <li><a href="/pages/contacts.html" class="text-sm text-gray-400 hover:text-white transition">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Trading -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Trading</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/pages/cryptocurrencies.html" class="text-sm text-gray-400 hover:text-white transition">Cryptocurrencies</a></li>
+                            <li><a href="/pages/forex.html" class="text-sm text-gray-400 hover:text-white transition">Forex</a></li>
+                            <li><a href="/pages/shares.html" class="text-sm text-gray-400 hover:text-white transition">Shares</a></li>
+                            <li><a href="/pages/indices.html" class="text-sm text-gray-400 hover:text-white transition">Indices</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Account -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Your Account</h3>
+                        <ul class="space-y-3">
+                            <li><a href="/pages/login.html" class="text-sm text-gray-400 hover:text-white transition">Log In</a></li>
+                            <li><a href="/pages/register.html" class="text-sm text-gray-400 hover:text-white transition">Create Account</a></li>
+                            <li><a href="/pages/login.html" class="text-sm text-gray-400 hover:text-white transition">Demo Account</a></li>
+                            <li><a href="contact" class="text-sm text-gray-400 hover:text-white transition">Help Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Availability -->
+    <div class="border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-6">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-4 md:mb-0">
+                        <h4 class="text-sm font-semibold text-white">Available On</h4>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <a href="#" class="flex items-center text-gray-400 hover:text-white" aria-label="Web Platform">
+                            <i class="fas fa-desktop mr-2"></i>
+                            <span class="text-sm">Web</span>
+                        </a>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-white" aria-label="Windows App">
+                            <i class="fab fa-windows mr-2"></i>
+                            <span class="text-sm">Windows</span>
+                        </a>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-white" aria-label="Android App">
+                            <i class="fab fa-android mr-2"></i>
+                            <span class="text-sm">Android</span>
+                        </a>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-white" aria-label="iOS App">
+                            <i class="fab fa-apple mr-2"></i>
+                            <span class="text-sm">iOS</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer & Legal -->
+    <div class="bg-dark-500 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-6">
+                <div class="text-xs text-gray-400">
+                    <p class="mb-4 leading-relaxed">
+                        <span class="font-semibold text-gray-300">RISK WARNING:</span> The Financial Products offered by the company include Contracts for Difference ('CFDs') and other complex financial products. Trading CFDs carries a high level of risk since leverage can work both to your advantage and disadvantage. As a result, CFDs may not be suitable for all investors because it is possible to lose all of your invested capital. You should never invest money that you cannot afford to lose. Before trading in the complex financial products offered, please ensure you understand the risks involved.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <a href="terms" class="text-blue-400 hover:text-blue-300 transition">Terms & Conditions</a>
+                        <a href="privacy" class="text-blue-400 hover:text-blue-300 transition">Privacy Policy</a>
+                        <a href="/pages/regulation.html" class="text-blue-400 hover:text-blue-300 transition">Legal Documents</a>
+                    </div>
+                    <p>© <script>document.write(new Date().getFullYear())</script> Stocks Profits. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+
+</footer>
+
+<!-- Sticky Market Ticker Widget -->
+<div class="fixed bottom-0 left-0 right-0 z-30 bg-dark-400 border-t border-gray-800">
+    <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        {
+        "symbols": [
+        {
+            "title": "EUR/USD"
+        },
+        {
+            "title": "BTC/USD"
+        },
+        {
+            "title": "ETH/USD"
+        }
+        ],
+        "colorTheme": "dark",
+        "isTransparent": false,
+        "displayMode": "adaptive",
+        "locale": "en"
+        }
+        </script>
+    </div>
+</div>
+
+<!-- Live Chat Button -->
+
+
+
+
+
+
+
+
+
+
+
+
+     <style>
+       .last-widget{
+          position: sticky;
+          z-index: 10;
+          bottom: 0;
+        }
+   </style>
+
+
+        <div class = "last-widget">
+        <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container" >
+  <div class="tradingview-widget-container__widget"></div>
+
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+  "symbols": [
+  {
+      "proName": "FX_IDC:EURUSD",
+      "title": "EUR/USD"
+  },
+  {
+      "proName": "BITSTAMP:BTCUSD",
+      "title": "BTC/USD"
+  },
+  {
+      "proName": "BITSTAMP:ETHUSD",
+      "title": "ETH/USD"
+  }
+  ],
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "locale": "en"
+}
+  </script>
+</div>
+
+
+        <!-- GetButton.io widget -->
+<!--<script type="text/javascript">-->
+<!--    (function () {-->
+<!--        var options = {-->
+            <!--whatsapp: "+18182938144", // WhatsApp number-->
+            <!--call_to_action: "Message us", // Call to action-->
+            <!--button_color: "#FF6550", // Color of button-->
+            <!--position: "right", // Position may be 'right' or 'left'-->
+<!--        };-->
+<!--        var proto = 'https:', host = "getbutton.io", url = proto + '//static.' + host;-->
+<!--        var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = url + '/widget-send-button/js/init.js';-->
 <!--        s.onload = function () { WhWidgetSendButton.init(host, proto, options); };-->
 <!--        var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);-->
 <!--    })();-->
 <!--</script>-->
 <!-- Additional Scripts -->
 <script>
+    let activeBots = {};
+    let botAllocations = { 1: 0, 2: 0, 3: 0 };
+    let botIntervals = {};
+    let totalBotProfit = 0;
+
+    window.initDashboardPage = function({ token, userData }) {
+      document.getElementById('page-topbar-title').textContent = 'Automated Trading';
+      document.getElementById('page-topbar-subtitle').textContent = 'Deploy and monitor advanced trading algorithms';
+    };
+
+    function addConsoleLog(message, isProfit = false) {
+      const logsContainer = document.getElementById('bot-console-logs');
+      if (!logsContainer) return;
+      const time = new Date().toLocaleTimeString();
+      const newLog = document.createElement('div');
+      if (isProfit) {
+        newLog.style.color = '#10b981';
+      }
+      newLog.textContent = `[${time}] ${message}`;
+      logsContainer.appendChild(newLog);
+      logsContainer.scrollTop = logsContainer.scrollHeight;
+    }
+
+    function clearConsole() {
+      const logsContainer = document.getElementById('bot-console-logs');
+      if (logsContainer) {
+        logsContainer.innerHTML = '<div style="color:#6b7280;">[System] Console cleared.</div>';
+      }
+    }
+
+    const botMessages = {
+      1: [
+        "Arbitrage Alpha: Scanning crypto cross-exchange spreads...",
+        "Arbitrage Alpha: Spread nominal on BTC/USDT (0.02%). Scanning secondary markets...",
+        "Arbitrage Alpha: Crypto arbitrage opportunity detected on SOL/USDT (0.91% spread)",
+        "Arbitrage Alpha: Buy SOL (Binance) / Sell SOL (Coinbase) complete.",
+        "Arbitrage Alpha: Execution finished. Profit booked."
+      ],
+      2: [
+        "Trend Rider Pro: Scanning stock CFDs 1-Hour moving averages...",
+        "Trend Rider Pro: Bulllish crossover detected on NVIDIA (NVDA) CFD",
+        "Trend Rider Pro: Initiating long position at market price",
+        "Trend Rider Pro: Trailing stop activated at target threshold",
+        "Trend Rider Pro: Trend reversal detected. Exited trade."
+      ],
+      3: [
+        "Mean Reversion Grid: Analyzing currency volatility index...",
+        "Mean Reversion Grid: Setting buy grid limits from 1.0820 to 1.0840 on EUR/USD",
+        "Mean Reversion Grid: Grid Buy order filled at 1.0830",
+        "Mean Reversion Grid: Market price bounced back to baseline. Closing limit hit.",
+        "Mean Reversion Grid: Grid cycle completed."
+      ]
+    };
+
+    window.toggleBot = function(botId, name, multiplier) {
+      const btn = document.getElementById(`bot-btn-${botId}`);
+      const statusSpan = document.getElementById(`bot-status-${botId}`);
+      const allocSpan = document.getElementById(`alloc-val-${botId}`);
+
+      if (activeBots[botId]) {
+        // Stop bot
+        clearInterval(botIntervals[botId]);
+        delete botIntervals[botId];
+        activeBots[botId] = false;
+        
+        btn.textContent = "Launch Bot";
+        btn.style.background = botId === 1 ? "linear-gradient(135deg, #3b82f6, #2563eb)" : (botId === 2 ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, #8b5cf6, #7c3aed)");
+        statusSpan.textContent = "Inactive";
+        statusSpan.style.color = "#9ca3af";
+        
+        addConsoleLog(`System: ${name} halted. Allocations returned to main vault.`);
+        botAllocations[botId] = 0;
+        allocSpan.textContent = "$0.00";
+      } else {
+        // Start bot
+        const allocInput = prompt(`Enter capital allocation for ${name} (USD):`, "100");
+        const amount = parseFloat(allocInput);
+        if (isNaN(amount) || amount <= 0) {
+          alert("Invalid allocation amount.");
+          return;
+        }
+
+        botAllocations[botId] = amount;
+        allocSpan.textContent = `$${amount.toFixed(2)}`;
+        activeBots[botId] = true;
+
+        btn.textContent = "Stop Bot";
+        btn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+        statusSpan.textContent = "Running";
+        statusSpan.style.color = "#10b981";
+
+        addConsoleLog(`System: ${name} launched with $${amount.toFixed(2)} allocated.`);
+
+        let step = 0;
+        botIntervals[botId] = setInterval(() => {
+          const list = botMessages[botId];
+          const msg = list[step % list.length];
+          step++;
+
+          if (msg.includes("complete") || msg.includes("Exited") || msg.includes("completed")) {
+            // Book profit
+            const pnl = (amount * (0.01 + Math.random() * 0.03)) * (multiplier / 500);
+            totalBotProfit += pnl;
+            document.getElementById('bot-total-profit').textContent = `+$${totalBotProfit.toFixed(2)}`;
+            addConsoleLog(`${msg} PnL: +$${pnl.toFixed(2)}`, true);
+          } else {
+            addConsoleLog(msg);
+          }
+        }, 4000);
+      }
+    };
+
     // Live Chat Function
     function openLiveChat(e) {
         e.preventDefault();

@@ -39,6 +39,11 @@ router.post('/register', async (req, res) => {
 
     const newUser = db.prepare('SELECT id, name, email, balance, created_at FROM users WHERE id = ?').get(result.lastInsertRowid);
 
+    // Insert welcome bonus transaction
+    db.prepare(
+      'INSERT INTO transactions (user_id, type, amount, status, note) VALUES (?, ?, ?, ?, ?)'
+    ).run(newUser.id, 'bonus', 200.00, 'confirmed', 'Welcome signup bonus');
+
     // Issue JWT
     const token = jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
 

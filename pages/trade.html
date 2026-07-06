@@ -250,9 +250,120 @@
 
 
   <script type="module" src="/main.js"></script>
+  <script type="module" src="/src/dashboard-shell.js"></script>
 </head>
 
 <body class="antialiased text-gray-200 bg-gray-900 font-sans min-h-screen flex flex-col">
+
+<template id="dashboard-content">
+  <!-- Dynamic dashboard Trade interface -->
+  <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-bottom:28px;">
+    <!-- Left Column: Chart -->
+    <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; overflow:hidden;">
+      <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; padding:18px 22px; border-bottom:1px solid rgba(255,255,255,.05);">
+        <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9;">Trading Terminal</div>
+        <select id="trade-symbol-select" style="background:#1e2736; border:1px solid rgba(255,255,255,.08); color:#cbd5e1; padding:6px 12px; border-radius:8px; font-size:13px; cursor:pointer; outline:none;">
+          <optgroup label="Crypto" style="background:#0a0f1a;">
+            <option value="BINANCE:BTCUSDT">BTC/USDT (Bitcoin)</option>
+            <option value="BINANCE:ETHUSDT">ETH/USDT (Ethereum)</option>
+            <option value="BINANCE:SOLUSDT">SOL/USDT (Solana)</option>
+          </optgroup>
+          <optgroup label="Forex" style="background:#0a0f1a;">
+            <option value="FX:EURUSD">EUR/USD (Euro / US Dollar)</option>
+            <option value="FX:GBPUSD">GBP/USD (British Pound / US Dollar)</option>
+            <option value="FX:USDJPY">USD/JPY (US Dollar / Japanese Yen)</option>
+          </optgroup>
+          <optgroup label="Stocks" style="background:#0a0f1a;">
+            <option value="NASDAQ:AAPL">Apple Inc. (AAPL)</option>
+            <option value="NASDAQ:TSLA">Tesla Motors (TSLA)</option>
+            <option value="NASDAQ:NVDA">NVIDIA Corp. (NVDA)</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="trade-chart-container" style="height: 500px;"></div>
+    </div>
+
+    <!-- Right Column: Order Panel -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; overflow:hidden;">
+        <div class="card-header" style="padding:18px 22px; border-bottom:1px solid rgba(255,255,255,.05);"><div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9;">Create Order</div></div>
+        <div class="card-body" style="padding:20px 22px; display:flex; flex-direction:column; gap:16px;">
+          <!-- Order Type Tabs -->
+          <div style="display:flex; background:rgba(0,0,0,.2); border-radius:8px; padding:4px;">
+            <button id="tab-buy" style="flex:1; border:none; padding:8px; border-radius:6px; font-weight:700; cursor:pointer; background:#10b981; color:#fff; outline:none; transition:all 0.2s;" onclick="setOrderType('buy')">BUY</button>
+            <button id="tab-sell" style="flex:1; border:none; padding:8px; border-radius:6px; font-weight:700; cursor:pointer; background:transparent; color:#9ca3af; outline:none; transition:all 0.2s;" onclick="setOrderType('sell')">SELL</button>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:#9ca3af;">
+            <span>Asset: <strong id="selected-asset-label" style="color:#fff;">BTC/USDT</strong></span>
+            <span>Available: <strong id="available-balance-label" style="color:#fff;">$200.00</strong></span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:13px; font-weight:600; color:#9ca3af;">Amount (USD)</label>
+            <input type="number" id="trade-amount" style="padding:12px 16px; border-radius:10px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.1); color:#fff; font-size:14px; outline:none;" placeholder="Min $10" min="10" />
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="font-size:13px; font-weight:600; color:#9ca3af;">Leverage</label>
+            <select id="trade-leverage" style="padding:12px 16px; border-radius:10px; background:rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.1); color:#fff; cursor:pointer; outline:none;">
+              <option value="1">1x (No Leverage)</option>
+              <option value="5">5x</option>
+              <option value="10">10x</option>
+              <option value="20">20x</option>
+              <option value="50">50x</option>
+              <option value="100">100x</option>
+            </select>
+          </div>
+
+          <!-- Order Summary -->
+          <div style="background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05); border-radius:10px; padding:12px; font-size:13px; display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; color:#9ca3af;">
+              <span>Execution Price</span>
+              <span id="market-price-label" style="color:#fff; font-family:monospace;">Market Price</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; color:#9ca3af;">
+              <span>Fee (0.1%)</span>
+              <span id="trade-fee-label" style="color:#fff;">$0.00</span>
+            </div>
+          </div>
+
+          <button id="execute-trade-btn" style="background:#10b981; border:none; padding:14px; border-radius:10px; font-weight:700; color:#fff; cursor:pointer; font-size:15px; outline:none; transition:all 0.2s;" onclick="executeTrade()">
+            Open BUY Position
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Alert Message -->
+  <div id="trade-alert" style="display:none; padding:12px 16px; border-radius:10px; font-size:13px; font-weight:500; margin-bottom:20px; text-align:center;"></div>
+
+  <!-- Open Positions Section -->
+  <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; overflow:hidden;">
+    <div class="card-header" style="padding:18px 22px; border-bottom:1px solid rgba(255,255,255,.05); display:flex; justify-content:space-between; align-items:center;">
+      <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9;">Active Positions</div>
+      <span class="badge badge-blue" id="positions-count-badge" style="background: rgba(99,102,241,.12); color: #a5b4fc; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600;">0 active</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Asset</th>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Type</th>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Amount</th>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Leverage</th>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Profit / Loss</th>
+            <th style="font-size:11px; font-weight:600; color:#4b5563; text-transform:uppercase; letter-spacing:.06em; padding:8px 12px; text-align:left; border-bottom:1px solid rgba(255,255,255,.05);">Action</th>
+          </tr>
+        </thead>
+        <tbody id="positions-tbody">
+          <tr><td colspan="6" style="text-align:center; padding:30px; color:#4b5563; font-size:13px;">No active positions. Create an order to start trading.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:bg-blue-700 focus:text-white focus:fixed focus:px-4 focus:py-2 focus:top-2 focus:left-2 focus:z-50">
         Skip to main content
@@ -977,8 +1088,246 @@
 <!--        var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);-->
 <!--    })();-->
 <!--</script>-->
+
 <!-- Additional Scripts -->
 <script>
+    // Dynamic Trading Dashboard Initialization
+    let activePositions = [];
+    let currentOrderType = 'buy';
+    let currentBalance = 200.00;
+    let selectedAsset = 'BTC/USDT';
+    let selectedSymbol = 'BINANCE:BTCUSDT';
+    let priceInterval = null;
+    let pnlInterval = null;
+
+    // Base mock prices
+    const assetPrices = {
+      'BINANCE:BTCUSDT': { base: 63850.20, precision: 2, label: 'BTC/USDT' },
+      'BINANCE:ETHUSDT': { base: 3340.80, precision: 2, label: 'ETH/USDT' },
+      'BINANCE:SOLUSDT': { base: 142.50, precision: 2, label: 'SOL/USDT' },
+      'FX:EURUSD': { base: 1.0820, precision: 4, label: 'EUR/USD' },
+      'FX:GBPUSD': { base: 1.2640, precision: 4, label: 'GBP/USD' },
+      'FX:USDJPY': { base: 160.85, precision: 2, label: 'USD/JPY' },
+      'NASDAQ:AAPL': { base: 185.30, precision: 2, label: 'AAPL' },
+      'NASDAQ:TSLA': { base: 177.40, precision: 2, label: 'TSLA' },
+      'NASDAQ:NVDA': { base: 122.60, precision: 2, label: 'NVDA' }
+    };
+
+    window.setOrderType = function(type) {
+      currentOrderType = type;
+      const buyBtn = document.getElementById('tab-buy');
+      const sellBtn = document.getElementById('tab-sell');
+      const executeBtn = document.getElementById('execute-trade-btn');
+
+      if (type === 'buy') {
+        buyBtn.style.background = '#10b981';
+        buyBtn.style.color = '#fff';
+        sellBtn.style.background = 'transparent';
+        sellBtn.style.color = '#9ca3af';
+        executeBtn.style.background = '#10b981';
+        executeBtn.textContent = 'Open BUY Position';
+      } else {
+        sellBtn.style.background = '#ef4444';
+        sellBtn.style.color = '#fff';
+        buyBtn.style.background = 'transparent';
+        buyBtn.style.color = '#9ca3af';
+        executeBtn.style.background = '#ef4444';
+        executeBtn.textContent = 'Open SELL Position';
+      }
+    };
+
+    window.executeTrade = function() {
+      const amountInput = document.getElementById('trade-amount');
+      const amount = parseFloat(amountInput.value);
+      const leverage = parseInt(document.getElementById('trade-leverage').value);
+      const alertEl = document.getElementById('trade-alert');
+
+      if (!amount || amount < 10) {
+        showTradeAlert('Minimum trade amount is $10.', 'error');
+        return;
+      }
+
+      if (amount > currentBalance) {
+        showTradeAlert('Insufficient balance. Please deposit funds.', 'error');
+        return;
+      }
+
+      const currentPrice = parseFloat(document.getElementById('market-price-label').textContent.replace('$', ''));
+      const fee = amount * 0.001;
+      
+      currentBalance = currentBalance - amount - fee;
+      updateBalanceUI();
+
+      // Create position object
+      const position = {
+        id: Date.now(),
+        asset: selectedAsset,
+        type: currentOrderType.toUpperCase(),
+        amount: amount,
+        leverage: leverage,
+        entryPrice: currentPrice,
+        currentPrice: currentPrice,
+        pnl: 0.0
+      };
+
+      activePositions.push(position);
+      amountInput.value = '';
+      showTradeAlert(`Successfully opened ${position.type} position on ${position.asset}!`, 'success');
+      renderPositions();
+    };
+
+    window.closePosition = function(id) {
+      const index = activePositions.findIndex(p => p.id === id);
+      if (index === -1) return;
+
+      const position = activePositions[index];
+      currentBalance = currentBalance + position.amount + position.pnl;
+      activePositions.splice(index, 1);
+
+      updateBalanceUI();
+      renderPositions();
+      showTradeAlert(`Closed ${position.asset} position. P&L: ${position.pnl >= 0 ? '+' : ''}$${position.pnl.toFixed(2)}`, 'success');
+    };
+
+    function showTradeAlert(text, type) {
+      const el = document.getElementById('trade-alert');
+      el.textContent = text;
+      el.style.display = 'block';
+      if (type === 'success') {
+        el.style.background = 'rgba(52,211,153,.1)';
+        el.style.border = '1px solid rgba(52,211,153,.2)';
+        el.style.color = '#34d399';
+      } else {
+        el.style.background = 'rgba(248,113,113,.1)';
+        el.style.border = '1px solid rgba(248,113,113,.2)';
+        el.style.color = '#f87171';
+      }
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function updateBalanceUI() {
+      // Update local storage so other pages sync
+      const userData = JSON.parse(localStorage.getItem('sp_user') || '{}');
+      userData.balance = currentBalance;
+      localStorage.setItem('sp_user', JSON.stringify(userData));
+
+      const formatted = currentBalance.toLocaleString('en-US', { style:'currency', currency:'USD' });
+      const balanceLabel = document.getElementById('available-balance-label');
+      if (balanceLabel) balanceLabel.textContent = formatted;
+      
+      const topbarBalance = document.getElementById('topbar-balance');
+      if (topbarBalance) topbarBalance.textContent = formatted;
+    }
+
+    function renderPositions() {
+      const tbody = document.getElementById('positions-tbody');
+      const badge = document.getElementById('positions-count-badge');
+      badge.textContent = `${activePositions.length} active`;
+
+      if (activePositions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#4b5563; font-size:13px;">No active positions. Create an order to start trading.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = activePositions.map(p => {
+        const pnlSign = p.pnl >= 0 ? '+' : '';
+        const pnlClass = p.pnl >= 0 ? 'text-green-400' : 'text-red-400';
+        const typeClass = p.type === 'BUY' ? 'badge-green' : 'badge-red';
+        const typeStyle = p.type === 'BUY' ? 'background:rgba(52,211,153,.12); color:#34d399;' : 'background:rgba(248,113,113,.12); color:#f87171;';
+        
+        return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
+          <td style="padding:14px 12px; font-weight:700; color:#fff;">${p.asset}</td>
+          <td style="padding:14px 12px;"><span class="badge ${typeClass}" style="${typeStyle} padding:3px 9px; border-radius:99px; font-size:11px; font-weight:600;">${p.type}</span></td>
+          <td style="padding:14px 12px;">$${p.amount.toFixed(2)}</td>
+          <td style="padding:14px 12px;">${p.leverage}x</td>
+          <td style="padding:14px 12px; font-weight:700;" class="${pnlClass}">${pnlSign}$${p.pnl.toFixed(2)}</td>
+          <td style="padding:14px 12px;">
+            <button onclick="closePosition(${p.id})" style="background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#f87171; font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer; transition:all 0.2s;">Close</button>
+          </td>
+        </tr>`;
+      }).join('');
+    }
+
+    window.initDashboardPage = function({ token, userData }) {
+      document.getElementById('page-topbar-title').textContent = 'Trading Platform';
+      document.getElementById('page-topbar-subtitle').textContent = 'Real-time financial CFD market execution';
+
+      currentBalance = userData.balance != null ? parseFloat(userData.balance) : 200.00;
+      updateBalanceUI();
+
+      // Chart loader helper
+      function loadTradingChart(symbol) {
+        document.getElementById('trade-chart-container').innerHTML = '';
+        new TradingView.widget({
+          container_id: 'trade-chart-container',
+          symbol: symbol,
+          interval: '15',
+          timezone: 'Etc/UTC',
+          theme: 'dark',
+          style: '1',
+          locale: 'en',
+          toolbar_bg: '#0d1526',
+          enable_publishing: false,
+          hide_side_toolbar: false,
+          allow_symbol_change: false,
+          save_image: false,
+          autosize: true,
+          backgroundColor: '#0d1526',
+          gridColor: 'rgba(255,255,255,0.04)',
+        });
+      }
+
+      loadTradingChart(selectedSymbol);
+
+      // Listen to select box changes
+      const selector = document.getElementById('trade-symbol-select');
+      selector.addEventListener('change', (e) => {
+        selectedSymbol = e.target.value;
+        const config = assetPrices[selectedSymbol];
+        selectedAsset = config.label;
+        document.getElementById('selected-asset-label').textContent = selectedAsset;
+        loadTradingChart(selectedSymbol);
+      });
+
+      // Price Simulator Loop
+      if (priceInterval) clearInterval(priceInterval);
+      priceInterval = setInterval(() => {
+        const config = assetPrices[selectedSymbol];
+        const change = (Math.random() - 0.5) * (config.base * 0.0008);
+        config.base += change;
+        const formattedPrice = config.precision === 4 
+          ? config.base.toFixed(4)
+          : '$' + config.base.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('market-price-label').textContent = formattedPrice;
+      }, 1000);
+
+      // P&L Simulator Loop
+      if (pnlInterval) clearInterval(pnlInterval);
+      pnlInterval = setInterval(() => {
+        if (activePositions.length === 0) return;
+        activePositions.forEach(p => {
+          // Simulate slight price variation for each position's target asset
+          const symbolKey = Object.keys(assetPrices).find(k => assetPrices[k].label === p.asset);
+          if (!symbolKey) return;
+          const currentAssetPrice = assetPrices[symbolKey].base;
+          
+          let priceDiff = (currentAssetPrice - p.entryPrice) / p.entryPrice;
+          if (p.type === 'SELL') priceDiff = -priceDiff;
+
+          p.currentPrice = currentAssetPrice;
+          p.pnl = priceDiff * p.amount * p.leverage;
+        });
+        renderPositions();
+      }, 2000);
+
+      // Watch amount input to calculate fee dynamically
+      const amountInput = document.getElementById('trade-amount');
+      amountInput.addEventListener('input', (e) => {
+        const amount = parseFloat(e.target.value) || 0;
+        document.getElementById('trade-fee-label').textContent = '$' + (amount * 0.001).toFixed(2);
+      });
+    };
+
     // Live Chat Function
     function openLiveChat(e) {
         e.preventDefault();
@@ -1036,15 +1385,5 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
-
-
-
-
-
-
-
-
-
-
 </body>
 </html>

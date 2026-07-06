@@ -217,6 +217,9 @@
       <a class="nav-item active" href="/pages/dashboard.html">
         <i data-lucide="layout-dashboard"></i> Dashboard
       </a>
+      <a class="nav-item" href="/pages/deposit.html">
+        <i data-lucide="download"></i> Deposit
+      </a>
       <a class="nav-item" href="/pages/trade.html">
         <i data-lucide="candlestick-chart"></i> Trade
       </a>
@@ -353,14 +356,14 @@
                   <a class="qa-btn" href="/pages/trade.html">
                     <i data-lucide="candlestick-chart"></i> Trade Now
                   </a>
-                  <a class="qa-btn" href="/pages/copy.html">
-                    <i data-lucide="copy"></i> Copy Trade
+                  <a class="qa-btn" href="/pages/deposit.html">
+                    <i data-lucide="download"></i> Deposit Funds
                   </a>
                   <a class="qa-btn" href="/pages/automate.html">
                     <i data-lucide="bot"></i> Automate
                   </a>
-                  <a class="qa-btn" href="/pages/contacts.html">
-                    <i data-lucide="headphones"></i> Support
+                  <a class="qa-btn" href="/pages/copy.html">
+                    <i data-lucide="copy"></i> Copy Trade
                   </a>
                 </div>
               </div>
@@ -402,65 +405,25 @@
           </div>
         </div>
 
-        <!-- Portfolio Table -->
+        <!-- Transaction History Table -->
         <div class="card">
           <div class="card-header">
-            <div class="card-title">Open Positions</div>
-            <span class="badge badge-blue">7 active</span>
+            <div class="card-title">Transaction History</div>
           </div>
           <div style="overflow-x:auto">
             <table>
               <thead>
                 <tr>
-                  <th>Asset</th>
+                  <th>Date</th>
                   <th>Type</th>
-                  <th>Entry Price</th>
-                  <th>Current Price</th>
-                  <th>P&L</th>
+                  <th>Amount</th>
+                  <th>Crypto</th>
                   <th>Status</th>
+                  <th>Note</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><strong style="color:#f8fafc">BTC/USDT</strong></td>
-                  <td><span class="badge badge-green">BUY</span></td>
-                  <td>$62,400.00</td>
-                  <td>$63,850.20</td>
-                  <td class="stat-up">+$1,450.20</td>
-                  <td><span class="badge badge-green">Open</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:#f8fafc">EUR/USD</strong></td>
-                  <td><span class="badge badge-red">SELL</span></td>
-                  <td>1.0845</td>
-                  <td>1.0820</td>
-                  <td class="stat-up">+$250.00</td>
-                  <td><span class="badge badge-green">Open</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:#f8fafc">AAPL</strong></td>
-                  <td><span class="badge badge-green">BUY</span></td>
-                  <td>$189.50</td>
-                  <td>$185.30</td>
-                  <td class="stat-down">-$84.00</td>
-                  <td><span class="badge badge-blue">Watch</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:#f8fafc">ETH/USDT</strong></td>
-                  <td><span class="badge badge-green">BUY</span></td>
-                  <td>$3,120.00</td>
-                  <td>$3,340.80</td>
-                  <td class="stat-up">+$220.80</td>
-                  <td><span class="badge badge-green">Open</span></td>
-                </tr>
-                <tr>
-                  <td><strong style="color:#f8fafc">GOLD</strong></td>
-                  <td><span class="badge badge-green">BUY</span></td>
-                  <td>$2,310.00</td>
-                  <td>$2,380.50</td>
-                  <td class="stat-up">+$70.50</td>
-                  <td><span class="badge badge-green">Open</span></td>
-                </tr>
+              <tbody id="tx-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:30px;color:#6b7280">Loading transactions...</td></tr>
               </tbody>
             </table>
           </div>
@@ -502,6 +465,41 @@
 
       // Date
       document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+      // Load transaction history
+      async function loadHistory() {
+        const API_BASE = 'https://stocks-profits-clone.onrender.com';
+        const tbody = document.getElementById('tx-tbody');
+        try {
+          const res = await fetch(`${API_BASE}/api/deposit/history`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          const txs = data.transactions || [];
+
+          if (txs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#6b7280">No transactions yet.</td></tr>';
+            return;
+          }
+
+          tbody.innerHTML = txs.map(tx => {
+            const date = new Date(tx.created_at + 'Z').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' });
+            const statusClass = tx.status === 'confirmed' ? 'badge-green' : tx.status === 'pending' ? 'badge-yellow' : 'badge-red';
+            const typeIcon = tx.type === 'bonus' ? '🎁' : tx.type === 'deposit' ? '⬇️' : '⬆️';
+            return `<tr>
+              <td>${date}</td>
+              <td>${typeIcon} ${tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}</td>
+              <td style="font-weight:700;color:#34d399">+$${parseFloat(tx.amount).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+              <td>${tx.crypto || '—'}</td>
+              <td><span class="badge ${statusClass}">${tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}</span></td>
+              <td style="font-size:12px;color:#6b7280">${tx.note || '—'}</td>
+            </tr>`;
+          }).join('');
+        } catch (err) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#ef4444">Failed to load transactions.</td></tr>';
+        }
+      }
+      loadHistory();
 
       // Logout
       document.getElementById('logout-btn').addEventListener('click', () => {

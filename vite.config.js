@@ -23,6 +23,7 @@ export default defineConfig({
         trade:         resolve(__dirname, 'pages/trade.html'),
         'why-us':      resolve(__dirname, 'pages/why-us.html'),
         dashboard:     resolve(__dirname, 'pages/dashboard.html'),
+        deposit:       resolve(__dirname, 'pages/deposit.html'),
       }
     }
   },

@@ -17,8 +17,25 @@ db.exec(`
     name        TEXT    NOT NULL,
     email       TEXT    NOT NULL UNIQUE COLLATE NOCASE,
     password    TEXT    NOT NULL,
-    balance     REAL    NOT NULL DEFAULT 10000.00,
+    balance     REAL    NOT NULL DEFAULT 200.00,
     created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+  );
+`);
+
+// Create transactions table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS transactions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    type        TEXT    NOT NULL,
+    amount      REAL    NOT NULL,
+    crypto      TEXT,
+    wallet      TEXT,
+    tx_hash     TEXT,
+    status      TEXT    NOT NULL DEFAULT 'confirmed',
+    note        TEXT,
+    created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id)
   );
 `);
 

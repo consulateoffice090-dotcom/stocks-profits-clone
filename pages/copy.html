@@ -250,9 +250,148 @@
 
 
   <script type="module" src="/main.js"></script>
+  <script type="module" src="/src/dashboard-shell.js"></script>
 </head>
 
 <body class="antialiased text-gray-200 bg-gray-900 font-sans min-h-screen flex flex-col">
+
+<template id="dashboard-content">
+  <div style="display:grid; grid-template-columns: 2.2fr 1fr; gap:24px; margin-bottom:28px;">
+    <!-- Left Column: Copyable Traders -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+      <div style="font-size:16px; font-weight:700; color:#fff;">Top Performing Strategy Providers</div>
+      
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <!-- Trader 1 -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:48px; height:48px; background:linear-gradient(135deg, #3b82f6, #6366f1); border-radius:50%; display:flex; items-center; justify-content:center; font-weight:700; color:#fff; font-size:18px; line-height:48px; text-align:center;">ER</div>
+            <div>
+              <h4 style="font-size:15px; font-weight:700; color:#fff; margin:0 0 2px 0;">Elena Rostova</h4>
+              <span style="font-size:11px; color:#3b82f6; font-weight:600; text-transform:uppercase; background:rgba(59,130,246,0.1); padding:2px 6px; border-radius:4px;">Forex Swing Master</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:24px;">
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">All-Time ROI</div>
+              <div style="font-size:16px; font-weight:700; color:#10b981;">+184.2%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Max DD</div>
+              <div style="font-size:16px; font-weight:700; color:#3b82f6;">8.5%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Copiers</div>
+              <div style="font-size:16px; font-weight:700; color:#fff;">1,420</div>
+            </div>
+          </div>
+          <div>
+            <button id="copy-btn-1" onclick="toggleCopy(1, 'Elena Rostova', 184)" class="submit-btn" style="border:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; transition:all 0.2s;">
+              Copy Strategy
+            </button>
+          </div>
+        </div>
+
+        <!-- Trader 2 -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:48px; height:48px; background:linear-gradient(135deg, #10b981, #059669); border-radius:50%; display:flex; items-center; justify-content:center; font-weight:700; color:#fff; font-size:18px; line-height:48px; text-align:center;">CW</div>
+            <div>
+              <h4 style="font-size:15px; font-weight:700; color:#fff; margin:0 0 2px 0;">Crypto Whale</h4>
+              <span style="font-size:11px; color:#10b981; font-weight:600; text-transform:uppercase; background:rgba(16,185,129,0.1); padding:2px 6px; border-radius:4px;">Crypto Momentum</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:24px;">
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">All-Time ROI</div>
+              <div style="font-size:16px; font-weight:700; color:#10b981;">+312.4%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Max DD</div>
+              <div style="font-size:16px; font-weight:700; color:#ef4444;">24.1%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Copiers</div>
+              <div style="font-size:16px; font-weight:700; color:#fff;">3,250</div>
+            </div>
+          </div>
+          <div>
+            <button id="copy-btn-2" onclick="toggleCopy(2, 'Crypto Whale', 312)" class="submit-btn" style="border:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #10b981, #059669); color:#fff; transition:all 0.2s;">
+              Copy Strategy
+            </button>
+          </div>
+        </div>
+
+        <!-- Trader 3 -->
+        <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:48px; height:48px; background:linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius:50%; display:flex; items-center; justify-content:center; font-weight:700; color:#fff; font-size:18px; line-height:48px; text-align:center;">SH</div>
+            <div>
+              <h4 style="font-size:15px; font-weight:700; color:#fff; margin:0 0 2px 0;">SafeHaven Index</h4>
+              <span style="font-size:11px; color:#8b5cf6; font-weight:600; text-transform:uppercase; background:rgba(139,92,246,0.1); padding:2px 6px; border-radius:4px;">Low-Risk ETFs</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:24px;">
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">All-Time ROI</div>
+              <div style="font-size:16px; font-weight:700; color:#10b981;">+46.8%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Max DD</div>
+              <div style="font-size:16px; font-weight:700; color:#10b981;">3.2%</div>
+            </div>
+            <div>
+              <div style="font-size:11px; color:#6b7280; text-transform:uppercase; margin-bottom:2px;">Copiers</div>
+              <div style="font-size:16px; font-weight:700; color:#fff;">980</div>
+            </div>
+          </div>
+          <div>
+            <button id="copy-btn-3" onclick="toggleCopy(3, 'SafeHaven Index', 46)" class="submit-btn" style="border:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer; background:linear-gradient(135deg, #8b5cf6, #7c3aed); color:#fff; transition:all 0.2s;">
+              Copy Strategy
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copier Logs / Feed -->
+      <div class="card" style="background: #060913; border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px; height:220px; display:flex; flex-direction:column;">
+        <div style="font-size:14px; font-weight:700; color:#f1f5f9; margin-bottom:12px;"><i class="fas fa-history" style="color:#3b82f6;"></i> Replication History Feed</div>
+        <div id="copy-history-feed" style="flex-grow:1; overflow-y:auto; font-size:12px; color:#9ca3af; display:flex; flex-direction:column; gap:8px;">
+          <div style="color:#6b7280;">No copy strategies active. Select a strategy above to begin replicating trades.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Stats and allocations -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <!-- Total Copy Return Card -->
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px;">
+        <div style="font-size:12px; color:#9ca3af; text-transform:uppercase; font-weight:600; margin-bottom:6px;">Total Copy Profit</div>
+        <div id="copy-total-profit" style="font-size:28px; font-weight:800; color:#10b981; margin-bottom:4px;">+$0.00</div>
+        <div style="font-size:11px; color:#6b7280;">Earnings replicated from active strategy providers</div>
+      </div>
+
+      <!-- Allocated Capital -->
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; padding:20px;">
+        <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9; margin-bottom:12px;">Active Allocations</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">Elena Rostova</span>
+            <span id="copy-alloc-val-1" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">Crypto Whale</span>
+            <span id="copy-alloc-val-2" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:#9ca3af;">SafeHaven Index</span>
+            <span id="copy-alloc-val-3" style="font-size:14px; font-weight:700; color:#fff;">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:bg-blue-700 focus:text-white focus:fixed focus:px-4 focus:py-2 focus:top-2 focus:left-2 focus:z-50">
         Skip to main content
@@ -1013,6 +1152,112 @@
 <!--</script>-->
 <!-- Additional Scripts -->
 <script>
+    let activeCopiers = {};
+    let copyAllocations = { 1: 0, 2: 0, 3: 0 };
+    let copyIntervals = {};
+    let totalCopyProfit = 0;
+
+    window.initDashboardPage = function({ token, userData }) {
+      document.getElementById('page-topbar-title').textContent = 'Copy Trading';
+      document.getElementById('page-topbar-subtitle').textContent = 'Replicate high-yield strategies from professional providers';
+    };
+
+    function addFeedLog(message, isProfit = false) {
+      const feed = document.getElementById('copy-history-feed');
+      if (!feed) return;
+      
+      // Remove placeholder if present
+      if (feed.textContent.includes("No copy strategies active")) {
+        feed.innerHTML = '';
+      }
+
+      const time = new Date().toLocaleTimeString();
+      const item = document.createElement('div');
+      item.style.display = 'flex';
+      item.style.justifyContent = 'space-between';
+      item.style.padding = '8px';
+      item.style.background = 'rgba(255,255,255,0.02)';
+      item.style.borderRadius = '6px';
+      item.style.border = '1px solid rgba(255,255,255,0.03)';
+      
+      const left = document.createElement('span');
+      left.textContent = `[${time}] ${message}`;
+      
+      item.appendChild(left);
+      
+      feed.insertBefore(item, feed.firstChild);
+      if (feed.childNodes.length > 20) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+
+    const tradeActions = {
+      1: [
+        { type: "open", msg: "Elena Rostova opened BUY EUR/USD @ 1.0842 (0.25 Lots)" },
+        { type: "close", msg: "Elena Rostova closed BUY EUR/USD @ 1.0864. Replicated profit booked.", profit: 5.5 }
+      ],
+      2: [
+        { type: "open", msg: "Crypto Whale opened BUY SOL/USD @ 138.45 (1.50 Lots)" },
+        { type: "close", msg: "Crypto Whale closed BUY SOL/USD @ 142.10. Replicated profit booked.", profit: 9.8 }
+      ],
+      3: [
+        { type: "open", msg: "SafeHaven Index opened BUY VOO ETF @ 468.20 (0.1 Lots)" },
+        { type: "close", msg: "SafeHaven Index closed BUY VOO ETF @ 470.50. Replicated profit booked.", profit: 2.3 }
+      ]
+    };
+
+    window.toggleCopy = function(traderId, name, multiplier) {
+      const btn = document.getElementById(`copy-btn-${traderId}`);
+      const allocSpan = document.getElementById(`copy-alloc-val-${traderId}`);
+
+      if (activeCopiers[traderId]) {
+        // Stop copying
+        clearInterval(copyIntervals[traderId]);
+        delete copyIntervals[traderId];
+        activeCopiers[traderId] = false;
+
+        btn.textContent = "Copy Strategy";
+        btn.style.background = traderId === 1 ? "linear-gradient(135deg, #3b82f6, #2563eb)" : (traderId === 2 ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, #8b5cf6, #7c3aed)");
+        
+        addFeedLog(`System: Stopped copying ${name}. Allocated funds returned.`);
+        copyAllocations[traderId] = 0;
+        allocSpan.textContent = "$0.00";
+      } else {
+        // Start copying
+        const allocInput = prompt(`Enter capital allocation to copy ${name} (USD):`, "100");
+        const amount = parseFloat(allocInput);
+        if (isNaN(amount) || amount <= 0) {
+          alert("Invalid allocation amount.");
+          return;
+        }
+
+        copyAllocations[traderId] = amount;
+        allocSpan.textContent = `$${amount.toFixed(2)}`;
+        activeCopiers[traderId] = true;
+
+        btn.textContent = "Stop Copying";
+        btn.style.background = "linear-gradient(135deg, #ef4444, #dc2626)";
+
+        addFeedLog(`System: Replicating trades for ${name} with $${amount.toFixed(2)} allocation.`);
+
+        let step = 0;
+        copyIntervals[traderId] = setInterval(() => {
+          const list = tradeActions[traderId];
+          const action = list[step % list.length];
+          step++;
+
+          if (action.type === "close") {
+            const profit = (amount * (0.015 + Math.random() * 0.025)) * (multiplier / 200);
+            totalCopyProfit += profit;
+            document.getElementById('copy-total-profit').textContent = `+$${totalCopyProfit.toFixed(2)}`;
+            addFeedLog(`${action.msg} PnL: +$${profit.toFixed(2)}`, true);
+          } else {
+            addFeedLog(action.msg);
+          }
+        }, 5000);
+      }
+    };
+
     // Live Chat Function
     function openLiveChat(e) {
         e.preventDefault();

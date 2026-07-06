@@ -250,9 +250,34 @@
 
 
   <script type="module" src="/main.js"></script>
+  <script type="module" src="/src/dashboard-shell.js"></script>
 </head>
 
 <body class="antialiased text-gray-200 bg-gray-900 font-sans min-h-screen flex flex-col">
+
+<template id="dashboard-content">
+  <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px; margin-bottom:28px;">
+    <!-- Left Column: Shares widget -->
+    <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; overflow:hidden; padding:20px;">
+      <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9; margin-bottom:15px;">Hot Stocks & Share Prices</div>
+      <!-- TradingView Widget BEGIN -->
+      <div class="tradingview-widget-container" style="height: 600px; width: 100%;">
+        <div class="tradingview-widget-container__widget" id="shares-screener-widget" style="height: 100%;"></div>
+      </div>
+    </div>
+    
+    <!-- Right Column: Info and trade navigation -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="card" style="background: linear-gradient(135deg, #0d1526, #111827); border: 1px solid rgba(255,255,255,.07); border-radius:16px; overflow:hidden; padding:20px;">
+        <div class="card-title" style="font-size:15px; font-weight:700; color:#f1f5f9; margin-bottom:12px;">Quick Trade</div>
+        <p style="font-size:13px; color:#9ca3af; line-height:1.6; margin-bottom:16px;">Trade major stock CFDs like Apple, Tesla, NVIDIA, and Microsoft with leverage and zero commissions.</p>
+        <a href="/pages/trade.html" class="submit-btn" style="display:block; text-align:center; background:linear-gradient(135deg, #6366f1, #4f46e5); border:none; padding:14px; border-radius:10px; font-weight:700; color:#fff; text-decoration:none; font-size:14px; transition:all 0.2s;">
+          Open Trading Terminal
+        </a>
+      </div>
+    </div>
+  </div>
+</template>
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:bg-blue-700 focus:text-white focus:fixed focus:px-4 focus:py-2 focus:top-2 focus:left-2 focus:z-50">
         Skip to main content
@@ -1029,6 +1054,39 @@ $(function() {
 <!--</script>-->
 <!-- Additional Scripts -->
 <script>
+    // Dynamic Dashboard Shares Initialization
+    window.initDashboardPage = function({ token, userData }) {
+      document.getElementById('page-topbar-title').textContent = 'Share Market';
+      document.getElementById('page-topbar-subtitle').textContent = 'Live global stock prices and trading data';
+      
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        "colorTheme": "dark",
+        "dateRange": "12M",
+        "showChart": true,
+        "locale": "en",
+        "largeChartUrl": "",
+        "isTransparent": true,
+        "showSymbolLogo": true,
+        "showFloatingTooltip": false,
+        "width": "100%",
+        "height": 600,
+        "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
+        "plotLineColorFalling": "rgba(255, 74, 104, 1)",
+        "gridLineColor": "rgba(240, 243, 250, 0)",
+        "scaleFontColor": "rgba(106, 109, 120, 1)",
+        "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+        "belowLineFillColorFalling": "rgba(255, 74, 104, 0.12)",
+        "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+        "belowLineFillColorFallingBottom": "rgba(255, 74, 104, 0)",
+        "symbolActiveColor": "rgba(41, 98, 255, 0.12)"
+      });
+      document.getElementById('shares-screener-widget').appendChild(script);
+    };
+
     // Live Chat Function
     function openLiveChat(e) {
         e.preventDefault();

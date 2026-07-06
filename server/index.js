@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import authRouter from './routes/auth.js';
+import depositRouter from './routes/deposit.js';
 import './database.js'; // initialize DB on startup
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ── API Routes ──────────────────────────────────────────────────────────────
 app.use('/api/auth', authRouter);
+app.use('/api/deposit', depositRouter);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
@@ -41,5 +43,8 @@ app.listen(PORT, () => {
   console.log(`    POST /api/auth/register`);
   console.log(`    POST /api/auth/login`);
   console.log(`    GET  /api/auth/me`);
+  console.log(`    GET  /api/deposit/wallets`);
+  console.log(`    POST /api/deposit/submit`);
+  console.log(`    GET  /api/deposit/history`);
   console.log(`    GET  /api/health\n`);
 });

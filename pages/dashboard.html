@@ -306,25 +306,25 @@
           <div class="stat-card" style="--accent-color: linear-gradient(90deg,#6366f1,#38bdf8)">
             <div class="stat-label">Portfolio Balance</div>
             <div class="stat-value" id="stat-balance">$0.00</div>
-            <div class="stat-sub stat-up"><i data-lucide="trending-up" style="width:12px;height:12px"></i> +2.4% today</div>
+            <div class="stat-sub" style="color:#6b7280">Available funds</div>
             <div class="stat-icon"><i data-lucide="wallet" style="color:#6366f1;width:22px;height:22px"></i></div>
           </div>
           <div class="stat-card" style="--accent-color: linear-gradient(90deg,#34d399,#059669)">
             <div class="stat-label">Total Profit</div>
-            <div class="stat-value" style="color:#34d399">+$1,284.50</div>
-            <div class="stat-sub stat-up"><i data-lucide="trending-up" style="width:12px;height:12px"></i> All time</div>
+            <div class="stat-value" id="stat-profit" style="color:#9ca3af">$0.00</div>
+            <div class="stat-sub" style="color:#6b7280">All time</div>
             <div class="stat-icon" style="background:rgba(52,211,153,.1)"><i data-lucide="dollar-sign" style="color:#34d399;width:22px;height:22px"></i></div>
           </div>
           <div class="stat-card" style="--accent-color: linear-gradient(90deg,#f59e0b,#d97706)">
             <div class="stat-label">Open Positions</div>
-            <div class="stat-value">7</div>
-            <div class="stat-sub"><span style="color:#f59e0b">3 profitable</span></div>
+            <div class="stat-value" id="stat-positions">0</div>
+            <div class="stat-sub" style="color:#6b7280">No active positions</div>
             <div class="stat-icon" style="background:rgba(245,158,11,.1)"><i data-lucide="activity" style="color:#f59e0b;width:22px;height:22px"></i></div>
           </div>
           <div class="stat-card" style="--accent-color: linear-gradient(90deg,#38bdf8,#0284c7)">
             <div class="stat-label">Win Rate</div>
-            <div class="stat-value">68%</div>
-            <div class="stat-sub stat-up"><i data-lucide="trending-up" style="width:12px;height:12px"></i> Above average</div>
+            <div class="stat-value" id="stat-winrate">0%</div>
+            <div class="stat-sub" style="color:#6b7280">No trades yet</div>
             <div class="stat-icon" style="background:rgba(56,189,248,.1)"><i data-lucide="target" style="color:#38bdf8;width:22px;height:22px"></i></div>
           </div>
         </div>
@@ -371,33 +371,19 @@
 
             <div class="card" style="flex:1">
               <div class="card-header"><div class="card-title">Recent Activity</div></div>
-              <div class="card-body" style="padding-top:4px">
-                <div class="activity-item">
-                  <div class="activity-dot" style="background:#34d399"></div>
-                  <div>
-                    <div class="activity-text">BTC/USDT Buy order filled</div>
-                    <div class="activity-time">2 min ago · +$42.10</div>
-                  </div>
-                </div>
-                <div class="activity-item">
-                  <div class="activity-dot" style="background:#f87171"></div>
-                  <div>
-                    <div class="activity-text">EUR/USD position closed</div>
-                    <div class="activity-time">1 hour ago · -$18.00</div>
-                  </div>
-                </div>
+              <div class="card-body" style="padding-top:4px" id="activity-feed">
                 <div class="activity-item">
                   <div class="activity-dot" style="background:#6366f1"></div>
                   <div>
-                    <div class="activity-text">Deposit confirmed</div>
-                    <div class="activity-time">Yesterday · $500.00</div>
+                    <div class="activity-text">🎉 Welcome bonus credited</div>
+                    <div class="activity-time">Account created · +$200.00</div>
                   </div>
                 </div>
                 <div class="activity-item">
-                  <div class="activity-dot" style="background:#34d399"></div>
+                  <div class="activity-dot" style="background:#38bdf8"></div>
                   <div>
-                    <div class="activity-text">ETH/USDT Sell order filled</div>
-                    <div class="activity-time">2 days ago · +$91.30</div>
+                    <div class="activity-text">Ready to start trading</div>
+                    <div class="activity-time">Deposit funds or open your first trade</div>
                   </div>
                 </div>
               </div>
